@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GHDocs.Core;
+using GHDocs.Properties;
 
-namespace GHDocs.Components
+namespace GHDocs.Components.Export
 {
     public class ExportDocsComponent : GH_Component
     {
@@ -75,6 +76,6 @@ namespace GHDocs.Components
             get { return new Guid("853A6FDE-0C09-4950-A661-539D29798322"); }
         }
 
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override System.Drawing.Bitmap Icon => Resources.exportMD;
     }
 }

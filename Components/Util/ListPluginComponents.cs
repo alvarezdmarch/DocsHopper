@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Grasshopper.Kernel;
 using GHDocs.Core;
+using GHDocs.Properties;
 
-namespace GHDocs.Components
+namespace GHDocs.Components.Util
 {
     public class TestReaderComponent : GH_Component
     {
@@ -78,6 +79,6 @@ namespace GHDocs.Components
             get { return new Guid("B304924E-5F79-4376-8738-2AA73ADF981D"); }
         }
 
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override System.Drawing.Bitmap Icon => Resources.listComponents;
     }
 }

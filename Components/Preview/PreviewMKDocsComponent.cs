@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using GHDocs.Properties;
 using Grasshopper.Kernel;
 
-namespace GHDocs.Components
+namespace GHDocs.Components.Preview
 {
     public class PreviewMkDocsComponent : GH_Component
     {
         public PreviewMkDocsComponent()
-          : base("Preview MkDocs", "PreviewDocs",
-              "Launches a local MkDocs server, opens your browser, and provides an option to install dependencies.",
-              "GHDocs", "Util")
+          : base("Preview MkDocs", "PreviewDocs", "Launches a local MkDocs server, opens your browser, and provides an option to install dependencies.", "GHDocs", "Preview")
         {
         }
 
@@ -104,6 +103,6 @@ namespace GHDocs.Components
 
         public override Guid ComponentGuid => new Guid("1D05CA62-C1E8-4C10-B55A-02EBAEA44156");
 
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override System.Drawing.Bitmap Icon => Resources.visualizeMkDocs;
     }
 }

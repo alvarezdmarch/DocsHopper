@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Grasshopper.Kernel;
+using System.Text.Json;
 
 namespace GHDocs.Core
 {
@@ -242,5 +243,201 @@ namespace GHDocs.Core
                 return Convert.ToBase64String(byteImage);
             }
         }
+
+        public string ExportJson(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(baseDirectory))
+                    return "Error: Base directory path is empty.";
+
+                string pluginDir = Path.Combine(baseDirectory, pluginName.Replace(" ", "_"));
+                CreateDirectories(pluginDir);
+
+                var exportData = new
+                {
+                    PluginMetadata = new
+                    {
+                        Name = pluginName,
+                        Description = mainDescription,
+                        ExportedAt = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        ComponentCount = components.Count
+                    },
+                    Components = components.Select(c => new
+                    {
+                        c.Name,
+                        c.NickName,
+                        c.Description,
+                        c.Category,
+                        c.SubCategory,
+                        IconBase = c.Icon != null ? BitmapToBase64(c.Icon) : null,
+                        Inputs = c.Inputs,
+                        Outputs = c.Outputs
+                    }).ToList()
+                };
+
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                string jsonString = JsonSerializer.Serialize(exportData, options);
+
+                string jsonPath = Path.Combine(pluginDir, "documentation.json");
+                File.WriteAllText(jsonPath, jsonString);
+
+                return $"Success: Exported {components.Count} components to documentation.json in {pluginDir}";
+            }
+            catch (Exception ex)
+            {
+                return $"Error during JSON export: {ex.Message}";
+            }
+        }
+
+        public string ExportHtmlSite(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(baseDirectory))
+                    return "Error: Base directory path is empty.";
+
+                string siteDir = Path.Combine(baseDirectory, pluginName.Replace(" ", "_") + "_HTML");
+                string componentsDir = Path.Combine(siteDir, "components");
+                string imagesDir = Path.Combine(siteDir, "images");
+
+                CreateDirectories(siteDir, componentsDir, imagesDir);
+
+                GenerateCss(Path.Combine(siteDir, "style.css"));
+                GenerateHtmlIndex(Path.Combine(siteDir, "index.html"), pluginName, mainDescription, components);
+
+                int successCount = 0;
+                foreach (var comp in components)
+                {
+                    if (GenerateHtmlComponentPage(componentsDir, comp)) successCount++;
+                }
+
+                return $"Success: Exported HTML site ({successCount}/{components.Count} components) to {siteDir}";
+            }
+            catch (Exception ex)
+            {
+                return $"Error during HTML export: {ex.Message}";
+            }
+        }
+
+        private void GenerateCss(string cssPath)
+        {
+            string css = @"
+:root { --primary: #d94c1a; --bg: #f8fafc; --text: #1e293b; --border: #e2e8f0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); line-height: 1.6; }
+.container { max-width: 900px; margin: 0 auto; padding: 2rem; background: white; min-height: 100vh; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+h1, h2, h3 { color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+h1 { color: var(--primary); border-bottom: none; }
+table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background-color: #f1f5f9; font-weight: 600; color: #475569; }
+tr:hover { background-color: #f8fafc; }
+a { color: var(--primary); text-decoration: none; font-weight: 500; }
+a:hover { text-decoration: underline; }
+.nav { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.meta { color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; }
+.icon { vertical-align: middle; margin-right: 10px; border-radius: 4px; }
+code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; }";
+            File.WriteAllText(cssPath, css);
+        }
+
+        private void GenerateHtmlIndex(string filePath, string pluginName, string mainDescription, List<DocComponent> components)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">");
+            sb.AppendLine($"<title>{pluginName} Documentation</title>");
+            sb.AppendLine("<link rel=\"stylesheet\" href=\"style.css\"></head><body>");
+            sb.AppendLine($"<div class=\"container\">");
+
+            sb.AppendLine($"<h1>{pluginName} Documentation</h1>");
+            sb.AppendLine($"<p>{mainDescription}</p>");
+
+            var groupedComponents = components.GroupBy(c => string.IsNullOrWhiteSpace(c.SubCategory) ? "Uncategorized" : c.SubCategory).OrderBy(g => g.Key);
+
+            foreach (var group in groupedComponents)
+            {
+                sb.AppendLine($"<h2>{group.Key}</h2>");
+                sb.AppendLine("<table><thead><tr><th>Name</th><th>Description</th></tr></thead><tbody>");
+
+                foreach (var comp in group)
+                {
+                    string safeName = MakeSafeFilename(comp.Name);
+                    string cleanDesc = comp.Description?.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " ") ?? "";
+
+                    string iconImg = "";
+                    if (comp.Icon != null)
+                    {
+                        string base64Icon = BitmapToBase64(comp.Icon);
+                        iconImg = $"<img src=\"data:image/png;base64,{base64Icon}\" class=\"icon\" width=\"24\" height=\"24\" alt=\"icon\">";
+                    }
+
+                    sb.AppendLine($"<tr><td>{iconImg}<a href=\"components/{safeName}.html\">{comp.Name}</a></td><td>{cleanDesc}</td></tr>");
+                }
+                sb.AppendLine("</tbody></table>");
+            }
+
+            sb.AppendLine("</div></body></html>");
+            File.WriteAllText(filePath, sb.ToString());
+        }
+
+        private bool GenerateHtmlComponentPage(string componentsDir, DocComponent comp)
+        {
+            try
+            {
+                string safeName = MakeSafeFilename(comp.Name);
+                string htmlPath = Path.Combine(componentsDir, $"{safeName}.html");
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">");
+                sb.AppendLine($"<title>{comp.Name} - Component</title>");
+
+                sb.AppendLine("<link rel=\"stylesheet\" href=\"../style.css\"></head><body>");
+                sb.AppendLine("<div class=\"container\">");
+
+                sb.AppendLine("<div class=\"nav\"><a href=\"../index.html\">&larr; Back to Index</a></div>");
+
+                string iconImg = "";
+                if (comp.Icon != null)
+                {
+                    string base64Icon = BitmapToBase64(comp.Icon);
+                    iconImg = $"<img src=\"data:image/png;base64,{base64Icon}\" class=\"icon\" width=\"32\" height=\"32\" alt=\"icon\">";
+                }
+
+                sb.AppendLine($"<h1>{iconImg}{comp.Name}</h1>");
+                sb.AppendLine($"<div class=\"meta\"><strong>Nickname:</strong> {comp.NickName} | <strong>Location:</strong> {comp.Category} > {comp.SubCategory}</div>");
+
+                sb.AppendLine($"<h2>Description</h2><p>{comp.Description}</p>");
+
+                sb.AppendLine("<h2>Inputs</h2>");
+                if (comp.Inputs.Count == 0) sb.AppendLine("<p><em>None</em></p>");
+                else
+                {
+                    sb.AppendLine("<table><thead><tr><th>Name</th><th>Type</th><th>Access</th><th>Description</th></tr></thead><tbody>");
+                    foreach (var input in comp.Inputs)
+                    {
+                        sb.AppendLine($"<tr><td><strong>{input.Name}</strong></td><td><code>{input.TypeName}</code></td><td>{input.Access}</td><td>{input.Description}</td></tr>");
+                    }
+                    sb.AppendLine("</tbody></table>");
+                }
+
+                sb.AppendLine("<h2>Outputs</h2>");
+                if (comp.Outputs.Count == 0) sb.AppendLine("<p><em>None</em></p>");
+                else
+                {
+                    sb.AppendLine("<table><thead><tr><th>Name</th><th>Type</th><th>Access</th><th>Description</th></tr></thead><tbody>");
+                    foreach (var output in comp.Outputs)
+                    {
+                        sb.AppendLine($"<tr><td><strong>{output.Name}</strong></td><td><code>{output.TypeName}</code></td><td>{output.Access}</td><td>{output.Description}</td></tr>");
+                    }
+                    sb.AppendLine("</tbody></table>");
+                }
+
+                sb.AppendLine("</div></body></html>");
+                File.WriteAllText(htmlPath, sb.ToString());
+                return true;
+            }
+            catch { return false; }
+        }
     }
+
 }

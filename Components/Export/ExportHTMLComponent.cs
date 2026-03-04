@@ -1,17 +1,16 @@
-﻿using System;
+﻿using Grasshopper.Kernel;
+using Rhino.Geometry;
+using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel;
 using GHDocs.Core;
-using System.IO;
+using GHDocs.Properties;
 
-namespace GHDocs.Components
+namespace GHDocs.Components.Export
 {
-    public class ExportMKDocsComponent : GH_Component
+    public class ExportHTMLComponent : GH_Component
     {
-        public ExportMKDocsComponent()
-          : base("Export MkDocs Site", "ExportMkDocs",
-              "Extracts component metadata and generates a fully configured MkDocs static website.",
-              "GHDocs", "Export")
+        public ExportHTMLComponent()
+          : base("Export HTML/CSS", "ExportHTML/CSS", "Generates a zero-dependency, static HTML/CSS website for your documentation.", "GHDocs", "Export")
         {
         }
 
@@ -25,7 +24,7 @@ namespace GHDocs.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("MkDocs Folder", "MkD", "MkDocs folder", GH_ParamAccess.item);
+            pManager.AddTextParameter("HTML/CSS Folder", "HTML/CSS", "HTML/CSS folder", GH_ParamAccess.item);
             pManager.AddTextParameter("Status", "S", "Export status message", GH_ParamAccess.item);
         }
 
@@ -36,10 +35,10 @@ namespace GHDocs.Components
             string outputDirectory = string.Empty;
             bool runExport = false;
 
-            if (!DA.GetData(0, ref pluginName)) return;
-            if (!DA.GetData(1, ref mainDescription)) return;
-            if (!DA.GetData(2, ref outputDirectory)) return;
-            if (!DA.GetData(3, ref runExport)) return;
+            if(!DA.GetData(0, ref pluginName)) return;
+            if(!DA.GetData(1, ref mainDescription)) return;
+            if(!DA.GetData(2, ref outputDirectory)) return;
+            if(!DA.GetData(3, ref runExport)) return;
 
             if (!runExport)
             {
@@ -54,7 +53,7 @@ namespace GHDocs.Components
             var pluginInfo = reader.GetPluginByName(pluginName);
             if (pluginInfo == null)
             {
-                DA.SetData(0, $"Error: Plugin '{pluginName}' not found.");
+                DA.SetData(1, $"Error: Plugin '{pluginName}' not found.");
                 return;
             }
 
@@ -63,13 +62,13 @@ namespace GHDocs.Components
 
             if (structuredDocs.Count == 0)
             {
-                DA.SetData(1, "Error: No valid components found to document.");
+                DA.SetData(1, $"Error: No components found for plugin '{pluginName}'.");
                 return;
             }
 
-            string statusMessage = exporter.ExportMkDocsSite(outputDirectory, pluginName, mainDescription, structuredDocs);
+            string statusMessage = exporter.ExportHtmlSite(outputDirectory, pluginName, mainDescription, structuredDocs);
 
-            DA.SetData(0, System.IO.Path.Join(outputDirectory, pluginName.Replace(" ", "_") + "_MkDocs"));
+            DA.SetData(0, outputDirectory);
             DA.SetData(1, statusMessage);
         }
 
@@ -77,13 +76,13 @@ namespace GHDocs.Components
         {
             get
             {
-                return null;
+                return Resources.exportHTMLCSS;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("4277E556-101A-4BB4-B9BC-B65943D81F0C"); }
+            get { return new Guid("C0F54440-3C9A-49EF-9364-03186FF3B953"); }
         }
     }
 }
