@@ -47,7 +47,8 @@ namespace GHDocs.Core
                 if (string.IsNullOrWhiteSpace(baseDirectory))
                     return "Error: Base directory path is empty.";
 
-                string siteDir = Path.Combine(baseDirectory, pluginName.Replace(" ", "_") + "_MkDocs");
+                //string siteDir = Path.Combine(baseDirectory, pluginName.Replace(" ", "_") + "_MkDocs");
+                string siteDir = baseDirectory;
                 string docsDir = Path.Combine(siteDir, "docs");
                 string componentsDir = Path.Combine(docsDir, "components");
                 string imagesDir = Path.Combine(docsDir, "images");

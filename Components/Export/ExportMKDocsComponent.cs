@@ -70,7 +70,7 @@ namespace GHDocs.Components.Export
 
             string statusMessage = exporter.ExportMkDocsSite(outputDirectory, pluginName, mainDescription, structuredDocs);
 
-            DA.SetData(0, System.IO.Path.Join(outputDirectory, pluginName.Replace(" ", "_") + "_MkDocs"));
+            DA.SetData(0, outputDirectory);
             DA.SetData(1, statusMessage);
         }
 
