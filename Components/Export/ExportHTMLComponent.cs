@@ -2,24 +2,26 @@
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
-using GHDocs.Core;
-using GHDocs.Properties;
+using DocsHopper.Core;
+using DocsHopper.Properties;
 
-namespace GHDocs.Components.Export
+namespace DocsHopper.Components.Export
 {
     public class ExportHTMLComponent : GH_Component
     {
         public ExportHTMLComponent()
-          : base("Export HTML/CSS", "ExportHTML/CSS", "Generates a zero-dependency, static HTML/CSS website for your documentation.", "GHDocs", "Export")
+          : base("Export HTML/CSS", "ExportHTML/CSS", "Generates a zero-dependency, static HTML/CSS website for your documentation.", "DocsHopper", "Export")
         {
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Plugin Name", "P", "Name of the plugin to document", GH_ParamAccess.item);
-            pManager.AddTextParameter("Main Description", "D", "Introductory text for the site index", GH_ParamAccess.item);
+            pManager.AddTextParameter("Plugin Name", "N", "Name of the plugin to document", GH_ParamAccess.item);
+            pManager.AddTextParameter("Main Description", "MD", "Introductory text for the site index", GH_ParamAccess.item);
             pManager.AddTextParameter("Output Directory", "OD", "Base folder path (e.g., your local git repository path)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Custom CSS", "CSS", "Optional CSS styles", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run Export", "Run", "Set to true to generate the site files", GH_ParamAccess.item, false);
+            pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -33,12 +35,16 @@ namespace GHDocs.Components.Export
             string pluginName = string.Empty;
             string mainDescription = string.Empty;
             string outputDirectory = string.Empty;
+            string customCss = null;
             bool runExport = false;
 
-            if(!DA.GetData(0, ref pluginName)) return;
-            if(!DA.GetData(1, ref mainDescription)) return;
-            if(!DA.GetData(2, ref outputDirectory)) return;
-            if(!DA.GetData(3, ref runExport)) return;
+            if (!DA.GetData(0, ref pluginName)) return;
+            if (!DA.GetData(1, ref mainDescription)) return;
+            if (!DA.GetData(2, ref outputDirectory)) return;
+
+            DA.GetData(3, ref customCss);
+
+            if (!DA.GetData(4, ref runExport)) return;
 
             if (!runExport)
             {
@@ -46,9 +52,9 @@ namespace GHDocs.Components.Export
                 return;
             }
 
-            GHDocsReader reader = new GHDocsReader();
-            GHDocsOrganizer organizer = new GHDocsOrganizer(reader);
-            GHDocsExporter exporter = new GHDocsExporter();
+            DocsHopperReader reader = new DocsHopperReader();
+            DocsHopperOrganizer organizer = new DocsHopperOrganizer(reader);
+            DocsHopperExporter exporter = new DocsHopperExporter();
 
             var pluginInfo = reader.GetPluginByName(pluginName);
             if (pluginInfo == null)
@@ -66,7 +72,7 @@ namespace GHDocs.Components.Export
                 return;
             }
 
-            string statusMessage = exporter.ExportHtmlSite(outputDirectory, pluginName, mainDescription, structuredDocs);
+            string statusMessage = exporter.ExportHtmlSite(outputDirectory, pluginName, mainDescription, structuredDocs, customCss);
 
             DA.SetData(0, outputDirectory);
             DA.SetData(1, statusMessage);

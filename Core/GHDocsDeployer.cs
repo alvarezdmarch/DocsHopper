@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace GHDocs.Core
+namespace DocsHopper.Core
 {
-    public class GHDocsDeployer
+    public class DocsHopperDeployer
     {
         public string GenerateGitHubWorkflow(string repoDir)
         {

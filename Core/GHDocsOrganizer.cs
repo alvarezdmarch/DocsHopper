@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 
-namespace GHDocs.Core
+namespace DocsHopper.Core
 {
-    public class GHDocsOrganizer
+    public class DocsHopperOrganizer
     {
-        private readonly GHDocsReader _reader;
+        private readonly DocsHopperReader _reader;
 
-        public GHDocsOrganizer(GHDocsReader reader)
+        public DocsHopperOrganizer(DocsHopperReader reader)
         {
             _reader = reader;
         }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GHDocs.Properties {
+namespace DocsHopper.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GHDocs.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GHDocs.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DocsHopper.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,26 @@ namespace GHDocs.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap customCSS {
+            get {
+                object obj = ResourceManager.GetObject("customCSS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap customMKDocs {
+            get {
+                object obj = ResourceManager.GetObject("customMKDocs", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -116,6 +136,26 @@ namespace GHDocs.Properties {
         internal static System.Drawing.Bitmap listComponents {
             get {
                 object obj = ResourceManager.GetObject("listComponents", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap previewHTMLCSS {
+            get {
+                object obj = ResourceManager.GetObject("previewHTMLCSS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap previewMKDocs {
+            get {
+                object obj = ResourceManager.GetObject("previewMKDocs", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

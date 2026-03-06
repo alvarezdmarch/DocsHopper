@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using GHDocs.Core;
-using GHDocs.Properties;
+using DocsHopper.Core;
+using DocsHopper.Properties;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace GHDocs.Components.Export
+namespace DocsHopper.Components.Export
 {
     public class ExportJsonComponent : GH_Component
     {
         public ExportJsonComponent()
-          : base("Export JSON", "ExportJSON", "Serializes component metadata and Base64 icons into a single headless .json file.", "GHDocs", "Export")
+          : base("Export JSON", "ExportJSON", "Serializes component metadata and Base64 icons into a single headless .json file.", "DocsHopper", "Export")
         {
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Plugin Name", "P", "Name of the plugin to document", GH_ParamAccess.item);
-            pManager.AddTextParameter("Main Description", "D", "Introductory text for the site index", GH_ParamAccess.item);
+            pManager.AddTextParameter("Plugin Name", "N", "Name of the plugin to document", GH_ParamAccess.item);
+            pManager.AddTextParameter("Main Description", "MD", "Introductory text for the site index", GH_ParamAccess.item);
             pManager.AddTextParameter("Output Directory", "OD", "Base folder path (e.g., your local git repository path)", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run Export", "Run", "Set to true to generate the site files", GH_ParamAccess.item, false);
         }
@@ -46,9 +46,9 @@ namespace GHDocs.Components.Export
                 return;
             }
 
-            GHDocsReader reader = new GHDocsReader();
-            GHDocsOrganizer organizer = new GHDocsOrganizer(reader);
-            GHDocsExporter exporter = new GHDocsExporter();
+            DocsHopperReader reader = new DocsHopperReader();
+            DocsHopperOrganizer organizer = new DocsHopperOrganizer(reader);
+            DocsHopperExporter exporter = new DocsHopperExporter();
 
             var pluginInfo = reader.GetPluginByName(pluginName);
             if (pluginInfo == null)

@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
-using GHDocs.Core;
-using GHDocs.Properties;
+using DocsHopper.Core;
+using DocsHopper.Properties;
 
-namespace GHDocs.Components.Export
+namespace DocsHopper.Components.Export
 {
     public class ExportDocsComponent : GH_Component
     {
         public ExportDocsComponent()
-          : base("Export GHDocs", "ExportDocs",
+          : base("Export DocsHopper", "ExportDocs",
               "Extracts component metadata and exports it as structured Markdown documentation.",
-              "GHDocs", "Export")
+              "DocsHopper", "Export")
         {
         }
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Plugin Name", "P", "Name of the plugin to document (e.g., 'Kangaroo2')", GH_ParamAccess.item);
+            pManager.AddTextParameter("Plugin Name", "N", "Name of the plugin to document (e.g., 'Kangaroo2')", GH_ParamAccess.item);
             pManager.AddTextParameter("Main Description", "D", "Introductory text for the README.md", GH_ParamAccess.item);
             pManager.AddTextParameter("Output Directory", "OD", "Base folder path to save the documentation", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run Export", "Run", "Set to true to generate files", GH_ParamAccess.item, false);
@@ -46,9 +46,9 @@ namespace GHDocs.Components.Export
                 return;
             }
 
-            GHDocsReader reader = new GHDocsReader();
-            GHDocsOrganizer organizer = new GHDocsOrganizer(reader);
-            GHDocsExporter exporter = new GHDocsExporter();
+            DocsHopperReader reader = new DocsHopperReader();
+            DocsHopperOrganizer organizer = new DocsHopperOrganizer(reader);
+            DocsHopperExporter exporter = new DocsHopperExporter();
 
             var pluginInfo = reader.GetPluginByName(pluginName);
             if (pluginInfo == null)

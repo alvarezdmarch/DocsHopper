@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using GHDocs.Core;
-using GHDocs.Properties;
+using DocsHopper.Core;
+using DocsHopper.Properties;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace GHDocs.Components.Deploy
+namespace DocsHopper.Components.Deploy
 {
     public class DeployMKDocsComponent : GH_Component
     {
         public DeployMKDocsComponent()
-          : base("Deploy MkDocs", "DeployMkD", "Creates a .yml file and pushes the repo to GitHub to trigger GitHub Pages.", "GHDocs", "Deploy")
+          : base("Deploy MkDocs", "DeployMkD", "Creates a .yml file and pushes the repo to GitHub to trigger GitHub Pages.", "DocsHopper", "Deploy")
         {
         }
 
@@ -46,7 +46,7 @@ namespace GHDocs.Components.Deploy
                 return;
             }
 
-            GHDocsDeployer deployer = new GHDocsDeployer();
+            DocsHopperDeployer deployer = new DocsHopperDeployer();
 
             if(!Directory.Exists(Path.Combine(documentationDirectory, ".git")))
             {

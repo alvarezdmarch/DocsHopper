@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using Grasshopper.Kernel;
 using System.Text.Json;
+using System.Runtime.CompilerServices;
 
-namespace GHDocs.Core
+namespace DocsHopper.Core
 {
-    public class GHDocsExporter
+    public class DocsHopperExporter
     {
         public string ExportStandardMarkdown(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components)
         {
@@ -40,7 +41,7 @@ namespace GHDocs.Core
             }
         }
 
-        public string ExportMkDocsSite(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components)
+        public string ExportMkDocsSite(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components, string customConfig = null)
         {
             try
             {
@@ -64,7 +65,7 @@ namespace GHDocs.Core
                     if (GenerateComponentFile(componentsDir, imagesDir, comp)) successCount++;
                 }
 
-                GenerateMkDocsYaml(siteDir, pluginName, mainDescription, components);
+                GenerateMkDocsYaml(siteDir, pluginName, mainDescription, components, customConfig);
 
                 return $"Success: Exported MkDocs site ({successCount}/{components.Count} components) to {siteDir}";
             }
@@ -190,15 +191,23 @@ namespace GHDocs.Core
             }
         }
 
-        private void GenerateMkDocsYaml(string siteDir, string pluginName, string mainDescription, List<DocComponent> components)
+        private void GenerateMkDocsYaml(string siteDir, string pluginName, string mainDescription, List<DocComponent> components, string customConfig = null)
         {
             string yamlPath = Path.Combine(siteDir, "mkdocs.yml");
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine($"site_name: {pluginName} Documentation");
             sb.AppendLine($"site_description: \"{mainDescription}\"");
-            sb.AppendLine("theme:");
-            sb.AppendLine("  name: material");
+
+            if (!string.IsNullOrWhiteSpace(customConfig))
+            {
+                sb.AppendLine(customConfig);
+            }
+            else
+            {
+                sb.AppendLine("theme:");
+                sb.AppendLine("  name: material");
+            }
 
             sb.AppendLine("docs_dir: 'docs'");
             sb.AppendLine();
@@ -291,20 +300,22 @@ namespace GHDocs.Core
             }
         }
 
-        public string ExportHtmlSite(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components)
+        public string ExportHtmlSite(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components, string customCss = null)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(baseDirectory))
                     return "Error: Base directory path is empty.";
 
-                string siteDir = Path.Combine(baseDirectory, pluginName.Replace(" ", "_") + "_HTML");
+                string siteDir = baseDirectory;
                 string componentsDir = Path.Combine(siteDir, "components");
                 string imagesDir = Path.Combine(siteDir, "images");
 
                 CreateDirectories(siteDir, componentsDir, imagesDir);
 
-                GenerateCss(Path.Combine(siteDir, "style.css"));
+                string finalCss = string.IsNullOrWhiteSpace(customCss) ? GetDefaultCss() : customCss;
+                File.WriteAllText(Path.Combine(siteDir, "style.css"), finalCss);
+
                 GenerateHtmlIndex(Path.Combine(siteDir, "index.html"), pluginName, mainDescription, components);
 
                 int successCount = 0;
@@ -321,9 +332,9 @@ namespace GHDocs.Core
             }
         }
 
-        private void GenerateCss(string cssPath)
+        private string GetDefaultCss()
         {
-            string css = @"
+            return @"
 :root { --primary: #d94c1a; --bg: #f8fafc; --text: #1e293b; --border: #e2e8f0; }
 body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); line-height: 1.6; }
 .container { max-width: 900px; margin: 0 auto; padding: 2rem; background: white; min-height: 100vh; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
@@ -339,7 +350,6 @@ a:hover { text-decoration: underline; }
 .meta { color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; }
 .icon { vertical-align: middle; margin-right: 10px; border-radius: 4px; }
 code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; }";
-            File.WriteAllText(cssPath, css);
         }
 
         private void GenerateHtmlIndex(string filePath, string pluginName, string mainDescription, List<DocComponent> components)

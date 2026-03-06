@@ -3,11 +3,11 @@ using Grasshopper.Kernel;
 using System;
 using System.Drawing;
 
-namespace GHDocs
+namespace DocsHopper
 {
-    public class GHDocsInfo : GH_AssemblyInfo
+    public class DocsHopperInfo : GH_AssemblyInfo
     {
-        public override string Name => "GHDocs";
+        public override string Name => "DocsHopper";
 
         //Return a 24x24 pixel bitmap to represent this GHA library.
         public override Bitmap Icon => null;
