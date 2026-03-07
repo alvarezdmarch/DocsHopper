@@ -23,7 +23,20 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <None Remove="Templates\AdvancedMkDocs.gh" />
+    <None Remove="Templates\CustomCSS.gh" />
+    <None Remove="Templates\MkDocs.gh" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\AdvancedMkDocs.gh" />
+    <EmbeddedResource Include="Templates\CustomCSS.gh" />
+    <EmbeddedResource Include="Templates\MkDocs.gh" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="Grasshopper" Version="8.0.23304.9001" ExcludeAssets="runtime" />
+    <PackageReference Include="System.Resources.Extensions" Version="10.0.3" />
   </ItemGroup>
   
   <!-- For Windows only builds -->
@@ -40,6 +53,19 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" ExcludeAssets="all" GeneratePathProperty="true" />
     <Reference Include="$(PkgMicrosoft_NETFramework_ReferenceAssemblies_net48)\build\.NETFramework\v4.8\System.Windows.Forms.dll" Private="False" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" ExcludeAssets="runtime" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <Target Name="BuildYakPackage" AfterTargets="DispatchToInnerBuilds">

@@ -2,20 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Grasshopper.Kernel;
-using GHDocs.Core;
+using DocsHopper.Core;
+using DocsHopper.Properties;
 
-namespace GHDocs.Components
+namespace DocsHopper.Components.Util
 {
     public class TestReaderComponent : GH_Component
     {
         public TestReaderComponent()
-          : base("Plugin Reader", "Reader", "Reads all the plugin information available.", "GHDocs", "Util")
+          : base("Plugin Reader", "Reader", "Reads all the plugin information available.", "DocsHopper", "Util")
         {
         }
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Plugin Name", "P", "Name of the plugin to search for", GH_ParamAccess.item);
+            pManager.AddTextParameter("Plugin Name", "N", "Name of the plugin to search for", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -28,8 +29,8 @@ namespace GHDocs.Components
             string pluginName = string.Empty;
             if (!DA.GetData(0, ref pluginName)) return;
 
-            GHDocsReader reader = new GHDocsReader();
-            GHDocsOrganizer organizer = new GHDocsOrganizer(reader);
+            DocsHopperReader reader = new DocsHopperReader();
+            DocsHopperOrganizer organizer = new DocsHopperOrganizer(reader);
 
             var pluginInfo = reader.GetPluginByName(pluginName);
             if (pluginInfo == null)
@@ -78,6 +79,6 @@ namespace GHDocs.Components
             get { return new Guid("B304924E-5F79-4376-8738-2AA73ADF981D"); }
         }
 
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override System.Drawing.Bitmap Icon => Resources.listComponents;
     }
 }

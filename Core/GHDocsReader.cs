@@ -4,11 +4,11 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 
-namespace GHDocs.Core
+namespace DocsHopper.Core
 {
-    public class GHDocsReader
+    public class DocsHopperReader
     {
-        public GHDocsReader()
+        public DocsHopperReader()
         {
             // Constructor can be expanded later if you need to inject settings or logging.
         }

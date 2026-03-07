@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using DocsHopper.Properties;
 using Grasshopper.Kernel;
 
-namespace GHDocs.Components
+namespace DocsHopper.Components.Preview
 {
     public class PreviewMkDocsComponent : GH_Component
     {
         public PreviewMkDocsComponent()
-          : base("Preview MkDocs", "PreviewDocs",
-              "Launches a local MkDocs server, opens your browser, and provides an option to install dependencies.",
-              "GHDocs", "Util")
+          : base("Preview MkDocs", "PreviewDocs", "Launches a local MkDocs server, opens your browser, and provides an option to install dependencies.", "DocsHopper", "Preview")
         {
         }
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("MkDocs Folder", "MkD", "The root directory of your MkDocs site (where mkdocs.yml is located)", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Launch Server", "L", "Set to true to start the server and open the browser", GH_ParamAccess.item, false);
-            pManager.AddBooleanParameter("Install MkDocs", "I", "Run this if 'mkdocs' is not recognized. Installs mkdocs-material via pip.", GH_ParamAccess.item, false);
+            pManager.AddTextParameter("MkDocs Folder", "MKD", "The root directory of your MkDocs site (where mkdocs.yml is located)", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Launch Server", "LS", "Set to true to start the server and open the browser", GH_ParamAccess.item, false);
+            pManager.AddBooleanParameter("Install MkDocs", "IMKD", "Run this if 'mkdocs' is not recognized. Installs mkdocs-material via pip.", GH_ParamAccess.item, false);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -104,6 +103,6 @@ namespace GHDocs.Components
 
         public override Guid ComponentGuid => new Guid("1D05CA62-C1E8-4C10-B55A-02EBAEA44156");
 
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override System.Drawing.Bitmap Icon => Resources.previewMKDocs;
     }
 }
