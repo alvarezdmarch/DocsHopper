@@ -19,7 +19,7 @@ namespace DocsHopper.Components.Export
             pManager.AddTextParameter("Plugin Name", "N", "Name of the plugin to document", GH_ParamAccess.item);
             pManager.AddTextParameter("Main Description", "MD", "Introductory text for the site index", GH_ParamAccess.item);
             pManager.AddTextParameter("Output Directory", "OD", "Base folder path (e.g., your local git repository path)", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Custom CSS", "CSS", "Optional CSS styles", GH_ParamAccess.item);
+            pManager.AddTextParameter("Custom CSS", "CSS", "Optional CSS styles", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run Export", "Run", "Set to true to generate the site files", GH_ParamAccess.item, false);
             pManager[3].Optional = true;
         }

@@ -75,6 +75,62 @@ namespace DocsHopper.Core
             }
         }
 
+        public string ExportAdvancedMkDocsSite(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components, List<DocSection> customSections, string customConfig = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(baseDirectory))
+                    return "Error: Base directory path is empty.";
+
+                string siteDir = baseDirectory;
+                string docsDir = Path.Combine(siteDir, "docs");
+                string componentsDir = Path.Combine(docsDir, "components");
+                string imagesDir = Path.Combine(docsDir, "images");
+
+                CreateDirectories(siteDir, docsDir, componentsDir, imagesDir);
+
+                string advancedDescription = mainDescription;
+
+                if (customSections != null && customSections.Count > 0)
+                {
+                    advancedDescription += "\n\n";
+
+                    foreach (var section in customSections)
+                    {
+                        advancedDescription += $"## {section.Title}\n\n{section.Content}\n\n";
+
+                        if (!string.IsNullOrWhiteSpace(section.ImagePath) && File.Exists(section.ImagePath))
+                        {
+                            string fileName = Path.GetFileName(section.ImagePath);
+                            string destPath = Path.Combine(imagesDir, fileName);
+
+                            File.Copy(section.ImagePath, destPath, true);
+
+                            advancedDescription += $"![{section.Title}](images/{fileName})\n\n";
+                        }
+                    }
+                }
+
+                string indexPath = Path.Combine(docsDir, "index.md");
+
+                GenerateIndexFile(indexPath, pluginName, advancedDescription, components);
+
+                int successCount = 0;
+                foreach (var comp in components)
+                {
+                    if (GenerateComponentFile(componentsDir, imagesDir, comp)) successCount++;
+                }
+
+                GenerateMkDocsYaml(siteDir, pluginName, mainDescription, components, customConfig);
+
+                return $"Success: Exported Advanced MkDocs site ({successCount}/{components.Count} components) to {siteDir}";
+            }
+            catch (Exception ex)
+            {
+                return $"Error during Advanced MkDocs export: {ex.Message}";
+            }
+        }
+
         private void CreateDirectories(params string[] paths)
         {
             foreach (var path in paths)
@@ -330,6 +386,100 @@ namespace DocsHopper.Core
             {
                 return $"Error during HTML export: {ex.Message}";
             }
+        }
+
+        public string ExportAdvancedHtmlSite(string baseDirectory, string pluginName, string mainDescription, List<DocComponent> components, List<DocSection> customSections, string customCss = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(baseDirectory))
+                    return "Error: Base directory path is empty.";
+
+                string siteDir = Path.Combine(baseDirectory, pluginName.Replace(" ", "_") + "_HTML");
+                string componentsDir = Path.Combine(siteDir, "components");
+                string imagesDir = Path.Combine(siteDir, "images");
+
+                CreateDirectories(siteDir, componentsDir, imagesDir);
+
+                string finalCss = string.IsNullOrWhiteSpace(customCss) ? GetDefaultCss() : customCss;
+                File.WriteAllText(Path.Combine(siteDir, "style.css"), finalCss);
+
+                string advancedHtmlContent = $"<p class=\"description\">{mainDescription}</p>\n";
+
+                if (customSections != null && customSections.Count > 0)
+                {
+                    advancedHtmlContent += "<div class=\"advanced-sections\">\n";
+                    foreach (var section in customSections)
+                    {
+                        advancedHtmlContent += $"  <div class=\"section\">\n";
+                        advancedHtmlContent += $"    <h2>{section.Title}</h2>\n";
+                        advancedHtmlContent += $"    <p>{section.Content}</p>\n";
+
+                        if (!string.IsNullOrWhiteSpace(section.ImagePath) && File.Exists(section.ImagePath))
+                        {
+                            string fileName = Path.GetFileName(section.ImagePath);
+                            string destPath = Path.Combine(imagesDir, fileName);
+                            File.Copy(section.ImagePath, destPath, true);
+
+                            advancedHtmlContent += $"    <img src=\"images/{fileName}\" alt=\"{section.Title}\" style=\"max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0;\" />\n";
+                        }
+                        advancedHtmlContent += $"  </div>\n";
+                    }
+                    advancedHtmlContent += "</div>\n";
+                }
+
+                GenerateAdvancedHtmlIndex(Path.Combine(siteDir, "index.html"), pluginName, advancedHtmlContent, components);
+
+                int successCount = 0;
+                foreach (var comp in components)
+                {
+                    if (GenerateHtmlComponentPage(componentsDir, comp)) successCount++;
+                }
+
+                return $"Success: Exported Advanced HTML site ({successCount}/{components.Count} components) to {siteDir}";
+            }
+            catch (Exception ex)
+            {
+                return $"Error during Advanced HTML export: {ex.Message}";
+            }
+        }
+
+        private void GenerateAdvancedHtmlIndex(string filePath, string pluginName, string customHtmlBlock, List<DocComponent> components)
+        {
+            System.Text.StringBuilder html = new System.Text.StringBuilder();
+            html.AppendLine("<!DOCTYPE html>");
+            html.AppendLine("<html lang=\"en\">");
+            html.AppendLine("<head>");
+            html.AppendLine("  <meta charset=\"UTF-8\">");
+            html.AppendLine($"  <title>{pluginName} Documentation</title>");
+            html.AppendLine("  <link rel=\"stylesheet\" href=\"style.css\">");
+            html.AppendLine("</head>");
+            html.AppendLine("<body>");
+            html.AppendLine("  <div class=\"container\">");
+            html.AppendLine($"    <h1>{pluginName}</h1>");
+
+            html.AppendLine(customHtmlBlock);
+
+            html.AppendLine("    <h2>Components</h2>");
+            html.AppendLine("    <table>");
+            html.AppendLine("      <tr><th>Name</th><th>Category</th><th>Description</th></tr>");
+
+            foreach (var comp in components)
+            {
+                string safeName = MakeSafeFilename(comp.Name);
+                html.AppendLine($"      <tr>");
+                html.AppendLine($"        <td><a href=\"components/{safeName}.html\">{comp.Name}</a></td>");
+                html.AppendLine($"        <td>{comp.Category} > {comp.SubCategory}</td>");
+                html.AppendLine($"        <td>{comp.Description}</td>");
+                html.AppendLine($"      </tr>");
+            }
+
+            html.AppendLine("    </table>");
+            html.AppendLine("  </div>");
+            html.AppendLine("</body>");
+            html.AppendLine("</html>");
+
+            File.WriteAllText(filePath, html.ToString());
         }
 
         private string GetDefaultCss()

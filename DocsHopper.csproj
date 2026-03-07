@@ -23,6 +23,18 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <None Remove="Templates\AdvancedMkDocs.gh" />
+    <None Remove="Templates\CustomCSS.gh" />
+    <None Remove="Templates\MkDocs.gh" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\AdvancedMkDocs.gh" />
+    <EmbeddedResource Include="Templates\CustomCSS.gh" />
+    <EmbeddedResource Include="Templates\MkDocs.gh" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="Grasshopper" Version="8.0.23304.9001" ExcludeAssets="runtime" />
     <PackageReference Include="System.Resources.Extensions" Version="10.0.3" />
   </ItemGroup>

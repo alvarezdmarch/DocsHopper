@@ -63,6 +63,16 @@ namespace DocsHopper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap createHomepageSection {
+            get {
+                object obj = ResourceManager.GetObject("createHomepageSection", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap customCSS {
             get {
                 object obj = ResourceManager.GetObject("customCSS", resourceCulture);
@@ -86,6 +96,26 @@ namespace DocsHopper.Properties {
         internal static System.Drawing.Bitmap deployGitHubSites {
             get {
                 object obj = ResourceManager.GetObject("deployGitHubSites", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap exportAdvHTMLCSS {
+            get {
+                object obj = ResourceManager.GetObject("exportAdvHTMLCSS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap exportAdvMkDocs {
+            get {
+                object obj = ResourceManager.GetObject("exportAdvMkDocs", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,6 +173,16 @@ namespace DocsHopper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap pluginSmallCleanClean {
+            get {
+                object obj = ResourceManager.GetObject("pluginSmallCleanClean", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap previewHTMLCSS {
             get {
                 object obj = ResourceManager.GetObject("previewHTMLCSS", resourceCulture);
@@ -156,6 +196,16 @@ namespace DocsHopper.Properties {
         internal static System.Drawing.Bitmap previewMKDocs {
             get {
                 object obj = ResourceManager.GetObject("previewMKDocs", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap templates {
+            get {
+                object obj = ResourceManager.GetObject("templates", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
