@@ -1,6 +1,7 @@
 ### DocsHopper
 
 Automated and deployment-ready documentation for Grasshopper plugins.
+Documentation (made with DocsHopper): https://alvarezdmarch.github.io/DocsHopper-Docs/
 
 DocsHopper is a utility plugin that extracts component metadata directly from your loaded Grasshopper assemblies and generates static documentation websites. Whether you need a lightweight vanilla HTML page or a fully customized MkDocs Material site deployed to GitHub Pages, DocsHopper handles the entire pipeline within the Grasshopper canvas.
 
