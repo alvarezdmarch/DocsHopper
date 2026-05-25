@@ -1,4 +1,4 @@
-﻿using DocsHopper.Core;
+using DocsHopper.Core;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System;
@@ -24,9 +24,11 @@ namespace DocsHopper.Components.Export
             pManager.AddTextParameter("Output Directory", "OD", "Base folder path", GH_ParamAccess.item);
             pManager.AddTextParameter("Custom Config", "CC", "Optional custom MkDocs YAML", GH_ParamAccess.item);
             pManager.AddGenericParameter("Homepage Sections", "SEC", "List of custom sections from the HomeSec component", GH_ParamAccess.list);
+            pManager.AddTextParameter("Examples Directory", "EX", "Optional directory containing .gh example files", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run Export", "Run", "Set to true to generate", GH_ParamAccess.item, false);
             pManager[3].Optional = true;
             pManager[4].Optional = true;
+            pManager[5].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -63,7 +65,10 @@ namespace DocsHopper.Components.Export
                 }
             }
 
-            if (!DA.GetData(5, ref runExport)) return;
+            string examplesDirectory = null;
+            DA.GetData(5, ref examplesDirectory);
+
+            if (!DA.GetData(6, ref runExport)) return;
 
             if (!runExport)
             {
@@ -91,7 +96,7 @@ namespace DocsHopper.Components.Export
                 return;
             }
 
-            string statusMessage = exporter.ExportAdvancedMkDocsSite(outputDirectory, pluginName, mainDescription, structuredDocs, customSections, customConfig);
+            string statusMessage = exporter.ExportAdvancedMkDocsSite(outputDirectory, pluginName, mainDescription, structuredDocs, customSections, customConfig, examplesDirectory);
 
             DA.SetData(0, outputDirectory);
             DA.SetData(1, statusMessage);

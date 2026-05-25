@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using DocsHopper.Core;
@@ -22,8 +22,10 @@ namespace DocsHopper.Components.Export
             pManager.AddTextParameter("Main Description", "MD", "Introductory text for the site index", GH_ParamAccess.item);
             pManager.AddTextParameter("Output Directory", "OD", "Base folder path (e.g., your local git repository path)", GH_ParamAccess.item);
             pManager.AddTextParameter("Custom Config", "CC", "Optional custom MkDocs configuration YAML", GH_ParamAccess.item);
+            pManager.AddTextParameter("Examples Directory", "EX", "Optional directory containing .gh example files", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run Export", "Run", "Set to true to generate the site files", GH_ParamAccess.item, false);
             pManager[3].Optional = true;
+            pManager[4].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -37,15 +39,18 @@ namespace DocsHopper.Components.Export
             string pluginName = string.Empty;
             string mainDescription = string.Empty;
             string outputDirectory = string.Empty;
+            string customConfig = null;
+            string examplesDirectory = null;
             bool runExport = false;
 
             if (!DA.GetData(0, ref pluginName)) return;
             if (!DA.GetData(1, ref mainDescription)) return;
             if (!DA.GetData(2, ref outputDirectory)) return;
-            if (!DA.GetData(4, ref runExport)) return;
 
-            string customConfig = null;
             DA.GetData(3, ref customConfig);
+            DA.GetData(4, ref examplesDirectory);
+
+            if (!DA.GetData(5, ref runExport)) return;
 
             if (!runExport)
             {
@@ -73,7 +78,7 @@ namespace DocsHopper.Components.Export
                 return;
             }
 
-            string statusMessage = exporter.ExportMkDocsSite(outputDirectory, pluginName, mainDescription, structuredDocs, customConfig);
+            string statusMessage = exporter.ExportMkDocsSite(outputDirectory, pluginName, mainDescription, structuredDocs, customConfig, examplesDirectory);
 
             DA.SetData(0, outputDirectory);
             DA.SetData(1, statusMessage);

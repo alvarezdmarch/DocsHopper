@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using DocsHopper.Core;
@@ -20,7 +20,9 @@ namespace DocsHopper.Components.Export
             pManager.AddTextParameter("Plugin Name", "N", "Name of the plugin to document (e.g., 'Kangaroo2')", GH_ParamAccess.item);
             pManager.AddTextParameter("Main Description", "D", "Introductory text for the README.md", GH_ParamAccess.item);
             pManager.AddTextParameter("Output Directory", "OD", "Base folder path to save the documentation", GH_ParamAccess.item);
+            pManager.AddTextParameter("Examples Directory", "EX", "Optional directory containing .gh example files", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run Export", "Run", "Set to true to generate files", GH_ParamAccess.item, false);
+            pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -33,12 +35,14 @@ namespace DocsHopper.Components.Export
             string pluginName = string.Empty;
             string mainDescription = string.Empty;
             string outputDirectory = string.Empty;
+            string examplesDirectory = null;
             bool runExport = false;
 
             if (!DA.GetData(0, ref pluginName)) return;
             if (!DA.GetData(1, ref mainDescription)) return;
             if (!DA.GetData(2, ref outputDirectory)) return;
-            if (!DA.GetData(3, ref runExport)) return;
+            DA.GetData(3, ref examplesDirectory);
+            if (!DA.GetData(4, ref runExport)) return;
 
             if (!runExport)
             {
@@ -66,7 +70,7 @@ namespace DocsHopper.Components.Export
                 return;
             }
 
-            string statusMessage = exporter.ExportStandardMarkdown(outputDirectory, pluginName, mainDescription, structuredDocs);
+            string statusMessage = exporter.ExportStandardMarkdown(outputDirectory, pluginName, mainDescription, structuredDocs, examplesDirectory);
 
             DA.SetData(0, statusMessage);
         }

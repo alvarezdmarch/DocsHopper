@@ -1,10 +1,11 @@
-﻿using Grasshopper.Kernel;
+﻿using DocsHopper.Properties;
+using Eto.Drawing;
+using Eto.Forms;
+using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Eto.Forms;
-using Eto.Drawing;
 
 namespace DocsHopper.Components.Preview
 {
@@ -108,7 +109,7 @@ namespace DocsHopper.Components.Preview
         {
             get
             {
-                return null;
+                return Resources.previewHTMLCSS;
             }
         }
 
