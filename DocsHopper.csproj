@@ -16,10 +16,10 @@
   
   <PropertyGroup>
     <!-- Specifies information for Assembly and Yak -->
-    <Version>1.0</Version>
+    <Version>1.1</Version>
     <Title>GHDocs</Title>
-    <Company>GHDocs Authors</Company>
-    <Description>Description of GHDocs</Description>
+    <Company>Marcelo Alvarez</Company>
+    <Description>A collection of utilities to generate Grasshopper plugin documentation automatically and dynamically.</Description>
   </PropertyGroup>
   
   <ItemGroup>

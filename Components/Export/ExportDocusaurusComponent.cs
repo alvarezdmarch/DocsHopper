@@ -1,16 +1,15 @@
-using Grasshopper.Kernel;
-using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using DocsHopper.Core;
 using DocsHopper.Properties;
+using Grasshopper.Kernel;
 
 namespace DocsHopper.Components.Export
 {
-    public class ExportHTMLComponent : GH_Component
+    public class ExportDocusaurusComponent : GH_Component
     {
-        public ExportHTMLComponent()
-          : base("Export HTML/CSS", "ExportHTML/CSS", "Generates a zero-dependency, static HTML/CSS website for your documentation.", "DocsHopper", "Export")
+        public ExportDocusaurusComponent()
+          : base("Export Docusaurus", "ExportDocusaurus", "Generates a site structure compatible with Docusaurus documentation framework.", "DocsHopper", "Export")
         {
         }
 
@@ -19,16 +18,14 @@ namespace DocsHopper.Components.Export
             pManager.AddTextParameter("Plugin Name", "N", "Name of the plugin to document", GH_ParamAccess.item);
             pManager.AddTextParameter("Main Description", "MD", "Introductory text for the site index", GH_ParamAccess.item);
             pManager.AddTextParameter("Output Directory", "OD", "Base folder path (e.g., your local git repository path)", GH_ParamAccess.item);
-            pManager.AddTextParameter("Custom CSS", "CSS", "Optional CSS styles", GH_ParamAccess.item);
             pManager.AddTextParameter("Examples Directory", "EX", "Optional directory containing .gh example files", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run Export", "Run", "Set to true to generate the site files", GH_ParamAccess.item, false);
             pManager[3].Optional = true;
-            pManager[4].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("HTML/CSS Folder", "HTML/CSS", "HTML/CSS folder", GH_ParamAccess.item);
+            pManager.AddTextParameter("Docusaurus Folder", "Dir", "Docusaurus folder", GH_ParamAccess.item);
             pManager.AddTextParameter("Status", "S", "Export status message", GH_ParamAccess.item);
         }
 
@@ -37,18 +34,14 @@ namespace DocsHopper.Components.Export
             string pluginName = string.Empty;
             string mainDescription = string.Empty;
             string outputDirectory = string.Empty;
-            string customCss = null;
             string examplesDirectory = null;
             bool runExport = false;
 
             if (!DA.GetData(0, ref pluginName)) return;
             if (!DA.GetData(1, ref mainDescription)) return;
             if (!DA.GetData(2, ref outputDirectory)) return;
-
-            DA.GetData(3, ref customCss);
-            DA.GetData(4, ref examplesDirectory);
-
-            if (!DA.GetData(5, ref runExport)) return;
+            DA.GetData(3, ref examplesDirectory);
+            if (!DA.GetData(4, ref runExport)) return;
 
             if (!runExport)
             {
@@ -72,11 +65,11 @@ namespace DocsHopper.Components.Export
 
             if (structuredDocs.Count == 0)
             {
-                DA.SetData(1, $"Error: No components found for plugin '{pluginName}'.");
+                DA.SetData(1, "Error: No valid components found to document.");
                 return;
             }
 
-            string statusMessage = exporter.ExportHtmlSite(outputDirectory, pluginName, mainDescription, structuredDocs, customCss, examplesDirectory);
+            string statusMessage = exporter.ExportDocusaurusSite(outputDirectory, pluginName, mainDescription, structuredDocs, examplesDirectory);
 
             DA.SetData(0, outputDirectory);
             DA.SetData(1, statusMessage);
@@ -86,13 +79,13 @@ namespace DocsHopper.Components.Export
         {
             get
             {
-                return Resources.exportHTMLCSS;
+                return Resources.exportMkDocs;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("C0F54440-3C9A-49EF-9364-03186FF3B953"); }
+            get { return new Guid("DF3C34F6-656C-4589-A295-885E489E5F09"); }
         }
     }
 }
